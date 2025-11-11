@@ -1,0 +1,34 @@
+$maxWidth: 40rem;
+
+.chatArea {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: center;
+  overflow-y: overlay;
+  padding: 1rem 0 0 0;
+  width: 100%;
+}
+
+.messageList {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  height: 100%;
+  max-width: $maxWidth;
+  padding: 0 0 0 1rem;
+  white-space: pre-line;
+  width: 100%;
+
+  > .loadingIndicator {
+    align-self: flex-start;
+    animation: loading-pulse 1s linear infinite alternate;
+    color: var(--pico-secondary-hover);
+    font-style: italic;
+    max-width: 50%;
+  }
+
+  > .scrollAnchor {
+    height: 2rem; // Accounts for the negative top margin of the input box.
+  }
+}

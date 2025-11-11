@@ -1,0 +1,42 @@
+.chatWrapper {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.chatModal {
+  > article {
+    max-width: 480px;
+    width: 50%;
+
+    > header {
+      align-items: center;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    > footer {
+      background-color: transparent;
+      text-align: center;
+
+      > button {
+        padding: 0.5rem 1.5rem;
+      }
+    }
+
+    > p {
+      min-height: 80px;
+    }
+  }
+}
+
+@keyframes loading-pulse {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.25;
+  }
+}

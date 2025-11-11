@@ -1,0 +1,89 @@
+.userMessage {
+  align-self: flex-end;
+  background-color: var(--pico-form-element-selected-background-color);
+  border-radius: 0.5rem;
+  color: var(--pico-form-element-placeholder-color);
+  margin-top: var(--pico-typography-spacing-vertical);
+  max-width: 50%;
+  padding: 1rem;
+}
+
+.aiMessage {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1;
+    margin-bottom: 0;
+    margin-top: 0.5em;
+  }
+
+  code {
+    padding: 0.25rem 0.5rem;
+  }
+
+  pre {
+    margin: 0;
+
+    > code {
+      padding: 1rem;
+    }
+  }
+
+  ol,
+  ul {
+    line-height: 1;
+    margin-bottom: 0;
+    margin-top: 0;
+
+    > li {
+      // Fixes for "bad" rendering caused by block elements inside list items.
+      &.blockContent {
+        line-height: 0;
+        margin: 0;
+
+        + li {
+          margin-top: calc(var(--pico-typography-spacing-vertical) * 0.5);
+        }
+
+        > * {
+          display: inline-block;
+          line-height: 1.5;
+          max-width: 100%;
+        }
+
+        > :first-child {
+          margin-top: -0.75rem; // half the line-height, to align with marker
+        }
+
+        > p {
+          margin-bottom: calc(var(--pico-typography-spacing-vertical) * 0.5);
+
+          > br {
+            display: none;
+          }
+        }
+      }
+
+      > p {
+        display: inline-block;
+      }
+
+      > ol,
+      > ul {
+        display: inline-block;
+        margin: 0;
+
+        > li {
+          line-height: 1.25;
+        }
+      }
+    }
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+}

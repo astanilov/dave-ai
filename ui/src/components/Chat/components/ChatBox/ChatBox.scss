@@ -1,0 +1,53 @@
+$maxWidth: 40rem;
+
+.chatBox {
+  background-color: var(--pico-form-element-selected-background-color);
+  border-radius: var(--pico-border-radius);
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: -2rem auto 1rem auto;
+  max-width: $maxWidth;
+  overflow: hidden;
+  padding: 0.5rem;
+  width: 100%;
+
+  &:focus-within {
+    box-shadow: 0 0 0 var(--pico-outline-width) var(--pico-form-element-focus-color);
+  }
+
+  > button[type="submit"] {
+    align-self: flex-end;
+    display: inline-block;
+    line-height: 1.35rem;
+    margin: 0;
+    min-width: 2rem;
+    padding: 0.25rem;
+    width: auto;
+
+    &[aria-busy="true"] {
+      &::before {
+        margin: 0;
+      }
+
+      > span {
+        display: none;
+      }
+    }
+  }
+
+  > textarea {
+    background-color: transparent;
+    border: 0;
+    font-family: inherit;
+    margin: 0;
+    padding: 0 0 0 0.25rem;
+    resize: none;
+    width: 100%;
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}

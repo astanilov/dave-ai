@@ -1,0 +1,42 @@
+@use "@picocss/pico/scss" with (
+  $theme-color: "slate"
+);
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  overflow: hidden;
+  transition: background-color var(--pico-transition);
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+// Custom scrollbar styling
+* {
+  // Firefox
+  scrollbar-color: var(--pico-secondary-background) var(--pico-background-color);
+  scrollbar-width: auto;
+
+  // Chrome, Edge, and Safari
+  &::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--pico-background-color);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--pico-secondary-background);
+    border: 2px solid var(--pico-background-color);
+    border-radius: 10px;
+  }
+}
+

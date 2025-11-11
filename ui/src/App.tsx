@@ -1,32 +1,35 @@
 import { useState, useEffect } from 'react';
+import { Chat, Navigation } from './components';
+import { getBrowserTheme } from './utils/getBrowserTheme';
 
 function App() {
-  const [message, setMessage] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
+  const [theme, setTheme] = useState('');
 
   useEffect(() => {
-    fetch('http://localhost:3001/api')
-      .then(res => res.json())
-      .then(data => {
-        setMessage(data.message);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching from API:', err);
-        setLoading(false);
-      });
+    setTheme(localStorage.getItem('theme') ?? getBrowserTheme());
   }, []);
 
+  useEffect(() => {
+    if (theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    setTheme((currentTheme) => {
+      const theme = currentTheme === 'dark' ? 'light' : 'dark';
+
+      localStorage.setItem('theme', theme);
+
+      return theme;
+    });
+  };
+
   return (
-    <div style={{ padding: '2rem', fontFamily: 'system-ui' }}>
-      <h1>Dave AI</h1>
-      <p>Davey Lopper the Assistant in Intelligence</p>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <p>API Response: {message || 'No response from API'}</p>
-      )}
-    </div>
+    <main>
+      <Navigation onToggleTheme={handleToggleTheme} />
+      <Chat />
+    </main>
   );
 }
 
