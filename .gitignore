@@ -1,0 +1,16 @@
+/dist
+/node_modules
+
+/ui/node_modules
+/api/node_modules
+
+/ui/dist
+/api/dist
+
+# Environment variables
+*.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
