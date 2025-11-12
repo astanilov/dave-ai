@@ -1,11 +1,17 @@
 /dist
 /node_modules
+/qdrant_storage
 
+# UI and API node modules
 /ui/node_modules
 /api/node_modules
 
+# Build outputs
 /ui/dist
 /api/dist
+
+# Ingest outputs
+/api/ingest/output
 
 # Environment variables
 *.env

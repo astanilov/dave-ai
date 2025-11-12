@@ -1,5 +1,7 @@
+import 'dotenv/config';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
+import main from './ingest';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -20,4 +22,11 @@ app.get('/api', (req: Request, res: Response) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 API server running on http://localhost:${PORT}`);
+});
+
+// Run data ingestion on startup once
+// TODO: Consider scheduling or triggering this differently in production
+main().catch(err => {
+  console.error('Fatal Error:', err);
+  process.exit(1);
 });
