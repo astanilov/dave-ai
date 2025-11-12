@@ -1,6 +1,10 @@
-import cfg from "./config";
+import cfg from './config';
 
-function chunkText(text: string, size = cfg.chunkSize, overlap = cfg.chunkOverlap) {
+function chunkText(
+  text: string,
+  size = cfg.chunkSize,
+  overlap = cfg.chunkOverlap
+) {
   const chunks: string[] = [];
   const t = text || '';
   if (!t) return chunks;

@@ -1,7 +1,13 @@
-import atlassian from "../clients/atlassian";
+import atlassian from '../clients/atlassian';
 
-async function fetchConfluenceContent({ spaceKey, limit = 100 }: { spaceKey?: string; limit?: number; }) {
-    console.log('fetchConfluenceContent called with:', { spaceKey, limit });
+async function fetchConfluenceContent({
+  spaceKey,
+  limit = 100,
+}: {
+  spaceKey?: string;
+  limit?: number;
+}) {
+  console.log('fetchConfluenceContent called with:', { spaceKey, limit });
   if (!spaceKey) return [];
   const results = [];
   let start = 0;

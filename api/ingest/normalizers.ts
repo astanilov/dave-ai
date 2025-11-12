@@ -1,6 +1,17 @@
-import { chunkText } from "./chunkers";
-import cfg from "./config";
-import { cleanText, extractTextFromADF, htmlToText, isMarkdown, isTestPath, markdownToText, personLite, slackText, truncate, tsToISO } from "./utils";
+import { chunkText } from './chunkers';
+import cfg from './config';
+import {
+  cleanText,
+  extractTextFromADF,
+  htmlToText,
+  isMarkdown,
+  isTestPath,
+  markdownToText,
+  personLite,
+  slackText,
+  truncate,
+  tsToISO,
+} from './utils';
 
 function fromJiraIssue(issue: Record<string, any>) {
   const key = issue.key;
@@ -40,7 +51,8 @@ function fromJiraIssue(issue: Record<string, any>) {
 }
 
 function fromConfluencePage(page: any) {
-  const bodyHtml = (page.body && page.body.storage && page.body.storage.value) || '';
+  const bodyHtml =
+    (page.body && page.body.storage && page.body.storage.value) || '';
   const text = htmlToText(bodyHtml);
   const url = `${cfg.atlassianBaseUrl}/wiki${(page._links && page._links.webui) || ''}`;
   return {
@@ -56,7 +68,12 @@ function fromConfluencePage(page: any) {
     metadata: {
       space: page.space && page.space.key,
       ancestors: (page.ancestors || []).map((a: any) => a.id),
-      labels: (page.metadata && page.metadata.labels && page.metadata.labels.results || []).map((l: any) => l.name),
+      labels: (
+        (page.metadata &&
+          page.metadata.labels &&
+          page.metadata.labels.results) ||
+        []
+      ).map((l: any) => l.name),
       version: page.version && page.version.number,
     },
   };
@@ -67,8 +84,15 @@ function fromSlackMessage(channelId: string, msg: any) {
   return {
     id: msg.ts,
     source: 'slack',
-    type: msg.thread_ts && msg.thread_ts !== msg.ts ? 'reply' : (msg.reply_count ? 'thread_root' : 'message'),
-    title: (msg.subtype ? `[${msg.subtype}] ` : '') + (msg.text ? truncate(msg.text, 80) : 'Slack message'),
+    type:
+      msg.thread_ts && msg.thread_ts !== msg.ts
+        ? 'reply'
+        : msg.reply_count
+          ? 'thread_root'
+          : 'message',
+    title:
+      (msg.subtype ? `[${msg.subtype}] ` : '') +
+      (msg.text ? truncate(msg.text, 80) : 'Slack message'),
     content_text: cleanText(slackText(msg)),
     url: permalink,
     created_at: tsToISO(msg.ts),
@@ -77,24 +101,45 @@ function fromSlackMessage(channelId: string, msg: any) {
     metadata: {
       channel: channelId,
       thread_ts: msg.thread_ts || null,
-      parent_ts: msg.thread_ts && msg.thread_ts !== msg.ts ? msg.thread_ts : null,
-      reactions: (msg.reactions || []).map((r: any) => ({ name: r.name, count: r.count })),
-      files: (msg.files || []).map((f: any) => ({ id: f.id, name: f.name, mimetype: f.mimetype, url_private: f.url_private })),
+      parent_ts:
+        msg.thread_ts && msg.thread_ts !== msg.ts ? msg.thread_ts : null,
+      reactions: (msg.reactions || []).map((r: any) => ({
+        name: r.name,
+        count: r.count,
+      })),
+      files: (msg.files || []).map((f: any) => ({
+        id: f.id,
+        name: f.name,
+        mimetype: f.mimetype,
+        url_private: f.url_private,
+      })),
     },
   };
 }
 
-function fromCodeFile({ origin, repo, root, owner, path: relPath, branch, content }: {
-    origin: 'github' | 'gitlab' | 'bitbucket';
-    repo: string;
-    root?: string;
-    owner?: string;
-    path: string;
-    branch?: string;
-    content: string;
+function fromCodeFile({
+  origin,
+  repo,
+  root,
+  owner,
+  path: relPath,
+  branch,
+  content,
+}: {
+  origin: 'github' | 'gitlab' | 'bitbucket';
+  repo: string;
+  root?: string;
+  owner?: string;
+  path: string;
+  branch?: string;
+  content: string;
 }) {
   const idBase = [origin, owner || repo, relPath].filter(Boolean).join('/');
-  const type = isMarkdown(relPath) ? 'markdown' : (isTestPath(relPath) ? 'test' : 'code');
+  const type = isMarkdown(relPath)
+    ? 'markdown'
+    : isTestPath(relPath)
+      ? 'test'
+      : 'code';
   const title = relPath.split(/[\\\/]/).slice(-1)[0];
   const text = isMarkdown(relPath) ? markdownToText(content) : content;
 
@@ -104,7 +149,10 @@ function fromCodeFile({ origin, repo, root, owner, path: relPath, branch, conten
     type,
     title,
     content_text: cleanText(text),
-    url: origin === 'github' ? `https://github.com/${owner}/${repo}/blob/${branch}/${relPath}` : undefined,
+    url:
+      origin === 'github'
+        ? `https://github.com/${owner}/${repo}/blob/${branch}/${relPath}`
+        : undefined,
     created_at: undefined,
     updated_at: undefined,
     author: undefined,
@@ -135,9 +183,4 @@ function fromCodeFile({ origin, repo, root, owner, path: relPath, branch, conten
   }));
 }
 
-export {
-  fromJiraIssue,
-  fromConfluencePage,
-  fromSlackMessage,
-  fromCodeFile,
-};
+export { fromJiraIssue, fromConfluencePage, fromSlackMessage, fromCodeFile };

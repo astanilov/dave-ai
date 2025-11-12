@@ -1,5 +1,5 @@
-import { mkdirSync } from "fs";
-import path from "path";
+import { mkdirSync } from 'fs';
+import path from 'path';
 
 const outDir = path.join(__dirname, 'output');
 mkdirSync(outDir, { recursive: true });

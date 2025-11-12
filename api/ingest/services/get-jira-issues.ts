@@ -1,10 +1,19 @@
-import atlassian from "../clients/atlassian";
+import atlassian from '../clients/atlassian';
 
-async function fetchJiraIssues({ jql, projectKey, max = 100 }: { jql?: string; projectKey?: string; max?: number; }) {
+async function fetchJiraIssues({
+  jql,
+  projectKey,
+  max = 100,
+}: {
+  jql?: string;
+  projectKey?: string;
+  max?: number;
+}) {
   const issues: any[] = [];
   let startAt = 0;
   let nextPageToken: string | null = null;
-  const query = jql || (projectKey ? `project=${projectKey} ORDER BY updated DESC` : '');
+  const query =
+    jql || (projectKey ? `project=${projectKey} ORDER BY updated DESC` : '');
 
   console.log('fetchJiraIssues called with:', { query, projectKey, max });
 
@@ -18,7 +27,16 @@ async function fetchJiraIssues({ jql, projectKey, max = 100 }: { jql?: string; p
         nextPageToken,
         startAt,
         fields: [
-          'summary','description','status','labels','created','updated','assignee','reporter','issuetype','project'
+          'summary',
+          'description',
+          'status',
+          'labels',
+          'created',
+          'updated',
+          'assignee',
+          'reporter',
+          'issuetype',
+          'project',
         ].join(','),
       },
     });
@@ -28,7 +46,6 @@ async function fetchJiraIssues({ jql, projectKey, max = 100 }: { jql?: string; p
     nextPageToken = data.nextPageToken || null;
     if (startAt >= max || !!data.isLast) break;
   }
-  console.log(`Fetched ${issues.length} Jira issues`);
   return issues;
 }
 
