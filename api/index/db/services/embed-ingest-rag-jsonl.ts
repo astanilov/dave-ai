@@ -17,12 +17,11 @@ async function embedIngestJsonl() {
     const BATCH = 128;
     const rows = Array.from(readJsonl(cfg.jsonlPath));
     console.log(`[JSONL] Loaded ${rows.length} rows from ${cfg.jsonlPath}`);
-
     for (let i = 0; i < rows.length; i += BATCH) {
       const slice = rows.slice(i, i + BATCH);
       const embeddings = await embedBatch(slice.map(r => r.text || ''));
       const points = slice.map((r, j) => ({
-        id: r.id,
+        id: crypto.randomUUID(),
         vector: embeddings[j],
         payload: { ...(r.metadata || {}), text: r.text, id: r.id },
       }));

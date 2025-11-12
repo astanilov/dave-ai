@@ -1,18 +1,30 @@
-import openai from '../../../clients/openai';
+import axios from 'axios';
 import cfg from '../../config';
 
-if (!cfg.openaiEmbeddingModel) {
+if (!cfg.embeddingProvider || !cfg.ollamaModel) {
   throw new Error(
-    'OpenAI embedding model is not specified in environment variables.'
+    'Embedding provider or Ollama model is not specified in environment variables.'
   );
 }
 
 async function embedBatch(texts: string[]) {
-  const r = await openai.embeddings.create({
-    model: cfg.openaiEmbeddingModel as string,
-    input: texts,
-  });
-  return r.data.map(d => d.embedding);
+  try {
+    if (cfg.embeddingProvider === 'ollama') {
+      const model = cfg.ollamaModel || 'nomic-embed-text';
+      const res = await axios.post('http://localhost:11434/api/embed', {
+        model,
+        input: texts,
+      });
+      if (res.status !== 200)
+        throw new Error(`Ollama embed error: ${res.status} ${res.statusText}`);
+      const data: any = res.data;
+      // Ollama returns { embeddings: number[][] }
+      return data.embeddings;
+    }
+  } catch (error) {
+    console.error('Error during Ollama embedding:', error);
+    throw error;
+  }
 }
 
 export default embedBatch;
