@@ -117,7 +117,7 @@ function fromSlackMessage(channelId: string, msg: any) {
   };
 }
 
-function fromCodeFile({
+async function fromCodeFile({
   origin,
   repo,
   root,
@@ -166,7 +166,9 @@ function fromCodeFile({
     },
   };
 
-  return chunkText(normalized.content_text).map((text, idx) => ({
+  const chunks = await chunkText(normalized.content_text);
+
+  return chunks.map((text, idx) => ({
     id: `${normalized.source}:${normalized.id}#${idx + 1}`,
     text,
     metadata: {

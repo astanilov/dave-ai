@@ -31,7 +31,7 @@ async function main() {
       max: cfg.jiraMaxIssues,
     });
     const jiraNorm = jiraIssues.map(fromJiraIssue);
-    rows.push(...jiraNorm.flatMap(toRagChunks));
+    rows.push(...(await Promise.all(jiraNorm.flatMap(toRagChunks))));
     console.log(
       `[Jira] fetched ${jiraIssues.length} issues → ${rows.length} total chunks so far`
     );
@@ -45,7 +45,7 @@ async function main() {
       spaceKey: cfg.confluenceSpaceKey,
     });
     const confNorm = pages.map(fromConfluencePage);
-    rows.push(...confNorm.flatMap(toRagChunks));
+    rows.push(...(await Promise.all(confNorm.flatMap(toRagChunks))));
     console.log(
       `[Confluence] fetched ${pages.length} pages → ${rows.length} total chunks so far`
     );
@@ -96,7 +96,7 @@ async function main() {
   //     }
 
   //     const slackNorm = allMsgs.map(m => fromSlackMessage(channelId, m));
-  //     rows.push(...slackNorm.flatMap(toRagChunks));
+  //     rows.push(...(await Promise.all(slackNorm.flatMap(toRagChunks))));
   //     console.log(`[Slack] fetched ${allMsgs.length} messages → ${rows.length} total chunks so far`);
   //   } catch (err: any) {
   //     console.error('[Slack] Error:', err.data || err.message);

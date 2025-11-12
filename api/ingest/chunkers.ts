@@ -1,27 +1,18 @@
+import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 import cfg from './config';
 
-function chunkText(
-  text: string,
-  size = cfg.chunkSize,
-  overlap = cfg.chunkOverlap
-) {
-  const chunks: string[] = [];
-  const t = text || '';
-  if (!t) return chunks;
-  let i = 0;
-  while (i < t.length) {
-    const end = Math.min(t.length, i + size);
-    const slice = t.slice(i, end);
-    chunks.push(slice.trim());
-    if (end >= t.length) break;
-    i = end - overlap;
-    if (i < 0) i = 0;
-  }
-  return chunks.filter(Boolean);
+const textSplitter = new RecursiveCharacterTextSplitter({
+  chunkSize: cfg.chunkSize,
+  chunkOverlap: cfg.chunkOverlap,
+});
+
+export async function chunkText(text: string) {
+  return textSplitter.splitText(text);
 }
 
-function toRagChunks(normalized: any) {
-  const chunks = chunkText(normalized.content_text);
+export async function toRagChunks(normalized: any) {
+  const chunks = await chunkText(normalized.content_text);
+
   return chunks.map((text, idx) => ({
     id: `${normalized.source}:${normalized.id}#${idx + 1}`,
     text,
@@ -42,5 +33,3 @@ function toRagChunks(normalized: any) {
     },
   }));
 }
-
-export { chunkText, toRagChunks };
