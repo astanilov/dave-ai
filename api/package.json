@@ -10,17 +10,16 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@langchain/core": "^1.0",
-    "@langchain/openai": "^1.1",
+    "@langchain/core": "^0.3",
+    "@langchain/openai": "^0.6",
     "@langchain/qdrant": "^1.0",
-    "@langchain/textsplitters": "^1.0",
     "@qdrant/js-client-rest": "^1.15.1",
     "@slack/web-api": "^7.12.0",
     "axios": "^1.13.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
-    "langchain": "^1.0",
+    "langchain": "^0.3",
     "openai": "^6.8.1",
     "p-limit": "^7.2.0",
     "uuid": "^13.0.0"

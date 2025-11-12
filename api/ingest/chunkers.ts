@@ -1,4 +1,4 @@
-import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
+import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter';
 import cfg from './config';
 
 const textSplitter = new RecursiveCharacterTextSplitter({
@@ -6,11 +6,11 @@ const textSplitter = new RecursiveCharacterTextSplitter({
   chunkOverlap: cfg.chunkOverlap,
 });
 
-export async function chunkText(text: string) {
+export async function chunkText(text: string): Promise<string[]> {
   return textSplitter.splitText(text);
 }
 
-export async function toRagChunks(normalized: any) {
+export async function toRagChunks(normalized: any): Promise<any[]> {
   const chunks = await chunkText(normalized.content_text);
 
   return chunks.map((text, idx) => ({
