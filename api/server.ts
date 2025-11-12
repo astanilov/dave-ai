@@ -1,24 +1,27 @@
 import 'dotenv/config';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import main from './ingest';
+import ingest from './ingest';
 import embedIngestJsonl from './index/db/services/embed-ingest-rag-jsonl';
+import healthRoutes from './routes/health';
+import askRoutes from './routes/ask';
+import bodyParser from 'body-parser';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(bodyParser.json());
+
+app.use((err: Error, req: Request, res: Response, next: Function) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 // Routes
-app.get('/api/health', (req: Request, res: Response) => {
-  res.json({ status: 'ok', message: 'Dave AI API is running' });
-});
-
-app.get('/api', (req: Request, res: Response) => {
-  res.json({ message: 'Welcome to Dave AI API' });
-});
+app.use('/api', healthRoutes);
+app.use('/api', askRoutes);
 
 // Start server
 app.listen(PORT, () => {
@@ -27,7 +30,7 @@ app.listen(PORT, () => {
 
 // Run data ingestion on startup once
 // TODO: Consider scheduling or triggering this differently in production
-main()
+ingest()
   .then(async () => {
     await embedIngestJsonl();
   })

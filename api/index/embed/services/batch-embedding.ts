@@ -1,7 +1,7 @@
 import axios from 'axios';
 import cfg from '../../config';
 
-if (!cfg.ollamaModel) {
+if (!cfg.ollamaEmbeddingModel) {
   throw new Error(
     'Embedding provider or Ollama model is not specified in environment variables.'
   );
@@ -9,7 +9,7 @@ if (!cfg.ollamaModel) {
 
 async function embedBatch(texts: string[]) {
   try {
-    const model = cfg.ollamaModel || 'nomic-embed-text';
+    const model = cfg.ollamaEmbeddingModel || 'nomic-embed-text';
     const res = await axios.post('http://localhost:11434/api/embed', {
       model,
       input: texts,

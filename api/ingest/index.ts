@@ -19,7 +19,7 @@ import readGithubFileText from './services/get-github-file-text';
 //import pLimit from "p-limit";
 
 // --- Main Orchestration -----------------------------------------------------
-async function main() {
+async function ingest() {
   console.log('🔍 Starting data ingestion from external sources...');
   const rows = [];
 
@@ -110,4 +110,4 @@ async function main() {
   console.log(`\n✅ Wrote ${rows.length} chunks to ${outFile}`);
 }
 
-export default main;
+export default ingest;
