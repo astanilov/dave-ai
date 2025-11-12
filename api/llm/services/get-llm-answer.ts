@@ -32,7 +32,7 @@ async function askWithOllama(question: string) {
   const prompt = `{top_k_chunks:\n${snippets}}\n\n{question: ${question}}\nAnswer:`;
 
   // 4️⃣ Ask Ollama (local GPT model, e.g. llama3 or mistral)
-  const chatRes = await axios.post('http://localhost:11434/api/chat', {
+  const { data } = await axios.post('http://localhost:11434/api/chat', {
     model: cfg.ollamaLlmModel,
     messages: [
       { role: 'system', content: systemPrompt },
@@ -40,20 +40,7 @@ async function askWithOllama(question: string) {
     ],
     stream: false,
   });
-  const data = await chatRes.data;
-
-  console.log('🧠 Answer:\n', data.message.content);
-  console.log(
-    '\n🔗 References:\n',
-    results.map(r => ({
-      id: r.id,
-      title: r?.payload?.title,
-      url: r?.payload?.url,
-      score: r.score,
-    }))
-  );
-
-  return {
+  const result = {
     answer: data.message.content,
     references: results.map(r => ({
       id: r.id,
@@ -62,6 +49,12 @@ async function askWithOllama(question: string) {
       score: r.score,
     })),
   };
+
+  console.log('🧠 Answer:\n', result.answer);
+  console.log();
+  console.log('🔗 References:\n', result.references);
+
+  return result;
 }
 
 export default askWithOllama;

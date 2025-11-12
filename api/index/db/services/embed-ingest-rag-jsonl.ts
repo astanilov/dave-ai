@@ -12,25 +12,33 @@ if (!cfg.qdrantCollection) {
 }
 
 async function embedIngestJsonl() {
+  const BATCH_SIZE = 128;
+
   console.log('🔍 Starting embedding and ingestion into Qdrant...');
+
   try {
     await ensureCollectionExists();
-    const BATCH = 128;
+
     const rows = Array.from(readJsonl(cfg.jsonlPath));
+
     console.log(`[JSONL] Loaded ${rows.length} rows from ${cfg.jsonlPath}`);
-    for (let i = 0; i < rows.length; i += BATCH) {
-      const slice = rows.slice(i, i + BATCH);
-      const embeddings = await embedBatch(slice.map(r => r.text || ''));
-      const points = slice.map((r, j) => ({
+
+    for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+      const items = rows.slice(i, i + BATCH_SIZE);
+      const embeddings = await embedBatch(items.map(r => r.text || ''));
+      const points = items.map(({ id, metadata, text }, j) => ({
         id: uuidv4(),
         vector: embeddings[j],
-        payload: { ...(r.metadata || {}), text: r.text, id: r.id },
+        payload: { ...(metadata || {}), text, id },
       }));
+
       await qdrant.upsert(cfg.qdrantCollection as string, { points });
+
       process.stdout.write(
-        `Upserted ${Math.min(i + BATCH, rows.length)}/${rows.length}\r`
+        `Upserted ${Math.min(i + BATCH_SIZE, rows.length)}/${rows.length}\r`
       );
     }
+
     process.stdout.write('\n');
     console.log('✅ Data embedding and DB ingestion completed successfully.');
   } catch (error) {

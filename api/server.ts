@@ -5,6 +5,7 @@ import ingest from './ingest';
 import embedIngestJsonl from './index/db/services/embed-ingest-rag-jsonl';
 import healthRoutes from './routes/health';
 import askRoutes from './routes/ask';
+import messagesRoutes from './routes/messages';
 import bodyParser from 'body-parser';
 
 const app = express();
@@ -22,6 +23,7 @@ app.use((err: Error, req: Request, res: Response, next: Function) => {
 // Routes
 app.use('/api', healthRoutes);
 app.use('/api', askRoutes);
+app.use('/api', messagesRoutes);
 
 // Start server
 app.listen(PORT, () => {

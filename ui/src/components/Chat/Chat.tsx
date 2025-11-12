@@ -39,11 +39,11 @@ const Chat = () => {
   };
 
   const handleSubmit = async (e?: React.FormEvent) => {
-    const message = input.trim();
+    const question = input.trim();
 
     e?.preventDefault();
 
-    if (!message) {
+    if (!question) {
       return;
     }
 
@@ -51,13 +51,13 @@ const Chat = () => {
       setLoading(true);
 
       // Append the user message immediately, for better UX.
-      setMessages((prev) => [...prev, createMessage(message, MessageSender.USER)]);
+      setMessages((prev) => [...prev, createMessage(question, MessageSender.USER)]);
       setInput('');
       focusChatBox();
 
-      const { response } = await api.post<{ response: string }>('/messages', { message });
+      const { answer } = await api.post<{ answer: string }>('/ask', { question });
 
-      setMessages((prev) => [...prev, createMessage(response, MessageSender.AI)]);
+      setMessages((prev) => [...prev, createMessage(answer, MessageSender.AI)]);
     } catch (ex: Error | any) {
       console.error('Error submitting message:', ex);
       setError(ex.message ?? ex);
