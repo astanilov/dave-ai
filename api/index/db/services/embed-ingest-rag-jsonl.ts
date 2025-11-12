@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import cfg from '../../config';
 import embedBatch from '../../embed/services/batch-embedding';
 import { readJsonl } from '../../utils';
@@ -21,7 +22,7 @@ async function embedIngestJsonl() {
       const slice = rows.slice(i, i + BATCH);
       const embeddings = await embedBatch(slice.map(r => r.text || ''));
       const points = slice.map((r, j) => ({
-        id: crypto.randomUUID(),
+        id: uuidv4(),
         vector: embeddings[j],
         payload: { ...(r.metadata || {}), text: r.text, id: r.id },
       }));
