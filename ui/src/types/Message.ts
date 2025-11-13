@@ -1,4 +1,4 @@
-import { MessageData } from "./MessageData";
+import { MessageData } from './MessageData';
 
 export interface Message extends MessageData {
   id: string;

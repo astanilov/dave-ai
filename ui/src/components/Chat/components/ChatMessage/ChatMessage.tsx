@@ -2,6 +2,7 @@ import { Element } from 'hast';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { type MessageData, MessageSender } from '../../../../types';
+import ReferenceList from '../ReferenceList/ReferenceList';
 
 import './ChatMessage.scss';
 
@@ -17,6 +18,7 @@ const ChatMessage = ({ message }: { message: MessageData }) => {
   // List item elements (`<li>`) with block content appear with too much spacing,
   // therefore they need to be identified and styled differently.
   const blockTagNames = ['ol', 'p', 'ul'];
+  const hasReferences = Number(message.references?.length) > 0;
 
   return (
     <div className="aiMessage">
@@ -40,6 +42,12 @@ const ChatMessage = ({ message }: { message: MessageData }) => {
       >
         {message.content}
       </ReactMarkdown>
+      {hasReferences && (
+        <section className="referencesSection">
+          <h6>References:</h6>
+          <ReferenceList items={message.references!} />
+        </section>
+      )}
     </div>
   );
 }

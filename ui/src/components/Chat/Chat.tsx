@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { api } from '../../lib/api';
-import { Message, MessageData, MessageSender } from '../../types';
+import type { Message, MessageData, Reference } from '../../types';
+import { MessageSender } from '../../types';
 import ChatArea from './components/ChatArea/ChatArea';
 import ChatBox, { ChatBoxApi } from './components/ChatBox/ChatBox';
 import ErrorModal from '../ErrorModal/ErrorModal';
@@ -34,8 +35,8 @@ const Chat = () => {
     chatBoxRef.current?.focus();
   };
 
-  const createMessage = (content: string, sender: MessageSender): MessageData => {
-    return { content, sender, timestamp: Date.now() };
+  const createMessage = (content: string, sender: MessageSender, references?: Array<Reference>): MessageData => {
+    return { content, sender, timestamp: Date.now(), references };
   };
 
   const handleSubmit = async (e?: React.FormEvent) => {
@@ -55,9 +56,9 @@ const Chat = () => {
       setInput('');
       focusChatBox();
 
-      const { answer } = await api.post<{ answer: string }>('/ask', { question });
+      const { answer, references } = await api.post<{ answer: string, references?: Array<Reference> }>('/ask', { question });
 
-      setMessages((prev) => [...prev, createMessage(answer, MessageSender.AI)]);
+      setMessages((prev) => [...prev, createMessage(answer, MessageSender.AI, references)]);
     } catch (ex: Error | any) {
       console.error('Error submitting message:', ex);
       setError(ex.message ?? ex);

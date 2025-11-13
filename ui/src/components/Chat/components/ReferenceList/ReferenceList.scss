@@ -1,0 +1,9 @@
+.referenceList {
+  > li {
+    margin-bottom: calc(0.5 * var(--pico-typography-spacing-vertical));
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
