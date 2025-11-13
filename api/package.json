@@ -4,10 +4,11 @@
   "description": "Dave AI - API Backend",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "nodemon --watch . --ext ts --exec ts-node server.ts",
-    "start": "node dist/server.js",
     "build": "tsc",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "dev": "nodemon --watch . --ext ts --exec ts-node server.ts",
+    "ingest": "ts-node ingest.ts",
+    "start": "node dist/server.js"
   },
   "dependencies": {
     "@langchain/core": "^0.3",

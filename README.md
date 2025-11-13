@@ -53,6 +53,14 @@ Run the following command under the project's root folder:
 npm install
 ```
 
+### Loading reference data
+
+To load reference data into the vector DB, run the following command under the `api/` folder:
+
+```bash
+npm run ingest
+```
+
 
 ## Command-line Reference
 
