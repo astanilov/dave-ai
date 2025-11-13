@@ -8,25 +8,9 @@ A modern AI application built with cutting-edge technologies.
 - Modern architecture
 - Easy to use
 
-## Installation
+## Initial Setup
 
-```bash
-npm install
-```
-
-## Usage
-
-```bash
-npm start
-```
-
-## Development
-
-```bash
-npm run dev
-```
-
-## Adding local Qdrant DB
+### Qdrant vector DB
 
 1. Open a terminal and run the following to pull the latest image:
 
@@ -42,7 +26,7 @@ npm run dev
         qdrant/qdrant
     ```
 
-## Adding Ollama
+### Ollama LLM models
 
 1. Go to the Ollama download page, and follow the instrucions to install it:
 
@@ -60,6 +44,40 @@ npm run dev
     ollama pull mxbai-embed-large
     ollama pull llama3
     ```
+
+### Installing project dependencies
+
+Run the following command under the project's root folder:
+
+```bash
+npm install
+```
+
+
+## Command-line Reference
+
+> [!NOTE]
+> Run commands in the respective sub-project folder (`api/` or `ui/`).
+
+### API
+
+| Command                | Description                                         |
+|------------------------|-----------------------------------------------------|
+| `npm run build`        | Build TypeScript sources                            |
+| `npm run clean`        | Remove build output                                 |
+| `npm run dev`          | Start backend in development mode                   |
+| `npm run ingest`       | Run data ingestion script                           |
+| `npm start`            | Start backend server (production)                   |
+
+### UI
+
+| Command                | Description                                         |
+|------------------------|-----------------------------------------------------|
+| `npm run build`        | Build frontend for production                       |
+| `npm run clean`        | Remove build output                                 |
+| `npm run dev`          | Start frontend in development mode                  |
+| `npm run preview`      | Preview production build locally                    |
+
 
 ## License
 
