@@ -1,0 +1,1 @@
+export { getCodebaseUrl } from './getCodebaseUrl';

@@ -1,3 +1,6 @@
+import { v5 as uuidv5 } from 'uuid';
+import { type CodebaseOrigin, ReferenceOrigin } from '../types';
+import { getCodebaseUrl } from '../utils';
 import { chunkText } from './chunkers';
 import cfg from './config';
 import {
@@ -18,20 +21,19 @@ function fromJiraIssue(issue: Record<string, any>) {
   const f = issue.fields || {};
   const url = `${cfg.atlassianBaseUrl}/browse/${key}`;
   // Jira Cloud may deliver description in ADF (rich text). Try a basic plain-text extraction.
-  let description = '';
-  if (f.description) {
+  let description = f.description ?? '';
+
+  if (f.description && typeof f.description === 'object' && f.description?.type === 'doc') {
     try {
-      // New ADF format
-      if (typeof f.description === 'object' && f.description.type === 'doc') {
-        description = extractTextFromADF(f.description);
-      } else {
-        description = String(f.description);
-      }
-    } catch (_) {}
+      description = extractTextFromADF(f.description);
+    } catch {
+      console.warn(`[Jira] Failed to extract description for issue "${key}", falling back to raw text.`);
+    }
   }
+
   return {
-    id: key,
-    source: 'jira',
+    id: uuidv5(url, uuidv5.URL),
+    source: ReferenceOrigin.JIRA,
     type: (f.issuetype && f.issuetype.name) || 'issue',
     title: f.summary || '',
     content_text: cleanText(description),
@@ -40,24 +42,24 @@ function fromJiraIssue(issue: Record<string, any>) {
     updated_at: f.updated,
     author: personLite(f.reporter),
     metadata: {
+      issue_key: issue.key,
+      issue_type: f.issuetype && f.issuetype.name,
       status: f.status && f.status.name,
       assignee: personLite(f.assignee),
       labels: f.labels || [],
       project: f.project && f.project.key,
-      issue_type: f.issuetype && f.issuetype.name,
-      key,
     },
   };
 }
 
 function fromConfluencePage(page: any) {
-  const bodyHtml =
-    (page.body && page.body.storage && page.body.storage.value) || '';
+  const bodyHtml = (page.body && page.body.storage && page.body.storage.value) || '';
   const text = htmlToText(bodyHtml);
   const url = `${cfg.atlassianBaseUrl}/wiki${(page._links && page._links.webui) || ''}`;
+
   return {
-    id: page.id,
-    source: 'confluence',
+    id: uuidv5(url, uuidv5.URL),
+    source: ReferenceOrigin.CONFLUENCE,
     type: page.type || 'page',
     title: page.title || '',
     content_text: cleanText(text),
@@ -66,6 +68,7 @@ function fromConfluencePage(page: any) {
     updated_at: page.version && page.version.when,
     author: page.history && personLite(page.history.createdBy),
     metadata: {
+      page_id: page.id,
       space: page.space && page.space.key,
       ancestors: (page.ancestors || []).map((a: any) => a.id),
       labels: (
@@ -80,10 +83,11 @@ function fromConfluencePage(page: any) {
 }
 
 function fromSlackMessage(channelId: string, msg: any) {
-  const permalink = msg.permalink || undefined; // later we can hydrate permalinks
+  const url = msg.permalink; // later we can hydrate permalinks
+
   return {
-    id: msg.ts,
-    source: 'slack',
+    id: uuidv5(url || `${channelId}-${msg.ts}`, uuidv5.URL),
+    source: ReferenceOrigin.SLACK,
     type:
       msg.thread_ts && msg.thread_ts !== msg.ts
         ? 'reply'
@@ -94,7 +98,7 @@ function fromSlackMessage(channelId: string, msg: any) {
       (msg.subtype ? `[${msg.subtype}] ` : '') +
       (msg.text ? truncate(msg.text, 80) : 'Slack message'),
     content_text: cleanText(slackText(msg)),
-    url: permalink,
+    url,
     created_at: tsToISO(msg.ts),
     updated_at: tsToISO(msg.ts),
     author: { id: msg.user, name: undefined, email: undefined },
@@ -120,21 +124,19 @@ function fromSlackMessage(channelId: string, msg: any) {
 async function fromCodeFile({
   origin,
   repo,
-  root,
   owner,
   path: relPath,
   branch,
   content,
 }: {
-  origin: 'github' | 'gitlab' | 'bitbucket';
+  origin: CodebaseOrigin;
   repo: string;
-  root?: string;
   owner?: string;
   path: string;
   branch?: string;
   content: string;
 }) {
-  const idBase = [origin, owner || repo, relPath].filter(Boolean).join('/');
+  const url = getCodebaseUrl(origin, repo, owner || '', relPath, branch || 'main');
   const type = isMarkdown(relPath)
     ? 'markdown'
     : isTestPath(relPath)
@@ -144,15 +146,12 @@ async function fromCodeFile({
   const text = isMarkdown(relPath) ? markdownToText(content) : content;
 
   const normalized = {
-    id: idBase,
-    source: 'repo',
+    id: uuidv5(url || [origin, owner || repo, relPath].filter(Boolean).join('/'), uuidv5.URL),
+    source: ReferenceOrigin.CODEBASE,
     type,
     title,
     content_text: cleanText(text),
-    url:
-      origin === 'github'
-        ? `https://github.com/${owner}/${repo}/blob/${branch}/${relPath}`
-        : undefined,
+    url,
     created_at: undefined,
     updated_at: undefined,
     author: undefined,

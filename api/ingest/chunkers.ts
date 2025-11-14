@@ -17,6 +17,7 @@ export async function toRagChunks(normalized: any): Promise<any[]> {
     id: `${normalized.source}:${normalized.id}#${idx + 1}`,
     text,
     metadata: {
+      id: normalized.id,
       source: normalized.source,
       type: normalized.type,
       title: normalized.title,
